@@ -17,13 +17,10 @@ public class CadastroPedidoService {
 
     public Pedido criarPedido(Pedido pedido){
 
-        CadastroPedido cadastroPedido = new CadastroPedido();
-        Pedido novoPedido = cadastroPedido.criarPedido(pedido);
+        Pedido novoPedido = CadastroPedido.criarPedido(pedido);
+
+
 
         return pedidoRepository.save(novoPedido);
-    }
-
-    public List<PedidoItem> teste(){
-        return pedidoRepository.findById(1).orElseThrow(RuntimeException :: new).getConteudo();
     }
 }

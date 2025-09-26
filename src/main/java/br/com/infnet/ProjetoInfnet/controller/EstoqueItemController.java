@@ -3,6 +3,8 @@ package br.com.infnet.ProjetoInfnet.controller;
 import br.com.infnet.ProjetoInfnet.model.domain.entities.EstoqueItem;
 import br.com.infnet.ProjetoInfnet.model.service.EstoqueItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -13,17 +15,15 @@ public class EstoqueItemController {
     @Autowired
     EstoqueItemService estoqueItemService;
 
-    public void mostrarEstoque(){
+    public ResponseEntity<List<EstoqueItem>> pegarEstoque(){
         List<EstoqueItem> estoqueItem = estoqueItemService.getEstoque();
 
-        for(EstoqueItem item : estoqueItem){
-            System.out.println(item);
-        }
+        return new ResponseEntity<List<EstoqueItem>>(estoqueItem, HttpStatus.OK);
     }
 
-    public void adicionarItem(EstoqueItem item){
+    public ResponseEntity<EstoqueItem> adicionarItem(EstoqueItem item){
         EstoqueItem itemAdicionado = estoqueItemService.adicionarItem(item);
 
-        System.out.println(itemAdicionado);
+        return new ResponseEntity<>(itemAdicionado,HttpStatus.CREATED);
     }
 }

@@ -1,8 +1,11 @@
 package br.com.infnet.ProjetoInfnet.controller;
 
 import br.com.infnet.ProjetoInfnet.model.domain.LoginUsuario;
+import br.com.infnet.ProjetoInfnet.model.domain.entities.Usuario;
 import br.com.infnet.ProjetoInfnet.model.service.LoginUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Scanner;
@@ -14,17 +17,14 @@ public class LoginUsuarioController {
     LoginUsuarioService loginUsuarioService;
 
     //Logar
-    public void logar(Scanner scanner){
-        System.out.println("Digite o email para logar:");
-        String email = scanner.next();
-        scanner.nextLine();
+    public ResponseEntity<Usuario> logar(String email, String senha){
 
-        System.out.println("Digite a senha do login");
-        String senha = scanner.next();
-        scanner.nextLine();
+        Usuario usuarioLogado = loginUsuarioService.logar(email, senha);
 
-        String mensagem = loginUsuarioService.logar(email, senha);
+        if(usuarioLogado == null)return new ResponseEntity<Usuario>(HttpStatus.NOT_FOUND);
 
-        System.out.println(mensagem);
+        if(usuarioLogado.getSenha() == null ) return new ResponseEntity<Usuario>(HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<Usuario>(usuarioLogado, HttpStatus.OK);
     }
 }

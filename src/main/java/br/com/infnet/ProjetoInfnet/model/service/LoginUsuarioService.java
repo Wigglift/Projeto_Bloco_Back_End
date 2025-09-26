@@ -12,18 +12,23 @@ public class LoginUsuarioService {
     @Autowired
     UsuarioRepository usuarioRepository;
 
-    public String logar(String email, String senha){
+    public Usuario logar(String email, String senha){
 
         try{
             Usuario tentativaLogin = usuarioRepository.findById(email).orElseThrow(RuntimeException::new);
-            if(!tentativaLogin.getSenha().equals(senha)) return "Senha errada, login falho";
+            if(!tentativaLogin.getSenha().equals(senha)){
+                Usuario usuarioFalho = new Usuario();
+                usuarioFalho.setEmail(email);
+                usuarioFalho.setSenha(null);
+                return usuarioFalho;
+            }
 
             LoginUsuario.setLogado(true);
-            LoginUsuario.setUsuarioAtual(usuarioRepository.getReferenceById(email));
-            return "Usuario "+LoginUsuario.getUsuarioAtual().getEmail()+" Logado : "+LoginUsuario.isLogado();
+            LoginUsuario.setUsuarioAtual(tentativaLogin);
+            return LoginUsuario.getUsuarioAtual();
 
         } catch (RuntimeException e){
-            return "Usuário não registrado, por favor faça o cadastro";
+            return null;
         }
     }
 

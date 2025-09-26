@@ -5,11 +5,13 @@ import br.com.infnet.ProjetoInfnet.model.domain.entities.PedidoItem;
 import br.com.infnet.ProjetoInfnet.model.domain.enumerator.StatusPedido;
 
 public class CadastroPedido {
-    private Pedido pedido;
-    private String email;
 
 
-    public Pedido criarPedido(Pedido pedido){
+    public static Pedido criarPedido(Pedido pedido){
+
+        pedido.setConteudo(CarrinhoDeCompras.getItens());
+
+        pedido.setPreco(CarrinhoDeCompras.valorTotal());
 
         for(PedidoItem itens : pedido.getConteudo()){
             itens.setPedido(pedido);
@@ -20,21 +22,5 @@ public class CadastroPedido {
         pedido.setStatus(StatusPedido.EMPREPARO);
 
         return pedido;
-    }
-
-    public Pedido getPedido() {
-        return pedido;
-    }
-
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }

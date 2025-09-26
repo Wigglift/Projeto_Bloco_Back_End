@@ -4,6 +4,8 @@ import br.com.infnet.ProjetoInfnet.model.domain.CadastroUsuario;
 import br.com.infnet.ProjetoInfnet.model.domain.entities.Usuario;
 import br.com.infnet.ProjetoInfnet.model.service.CadastroUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,22 +18,13 @@ public class CadastroUsuarioController {
     @Autowired
     private CadastroUsuarioService cadastroUsuarioService;
 
-//cadastrar
-    public void cadastrar(Scanner scanner){
-    System.out.println("Digite o email:");
-    String email = scanner.next();
-    scanner.nextLine();
 
-    System.out.println("Digite a senha");
-    String senha = scanner.next();
-    scanner.nextLine();
+    public ResponseEntity<Usuario> cadastrar(CadastroUsuario novoCadastro){
 
-    String mensagem = cadastroUsuarioService.cadastrar(email,senha);
+    Usuario usuario = cadastroUsuarioService.cadastrar(novoCadastro);
 
-    System.out.println(mensagem);
+    if (usuario == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+    return new ResponseEntity<Usuario>(usuario, HttpStatus.CREATED);
 }
-
-//emailValido
-
-//senhaValida
 }

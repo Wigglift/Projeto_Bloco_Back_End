@@ -11,7 +11,7 @@ public class PedidoItem {
 
     private String nome;
     private Double preco;
-    private int quantidade;
+    private Integer quantidade;
 
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)

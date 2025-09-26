@@ -1,6 +1,12 @@
 package br.com.infnet.ProjetoInfnet;
 
 import br.com.infnet.ProjetoInfnet.controller.*;
+import br.com.infnet.ProjetoInfnet.model.domain.CadastroUsuario;
+import br.com.infnet.ProjetoInfnet.model.domain.CarrinhoDeCompras;
+import br.com.infnet.ProjetoInfnet.model.domain.LoginUsuario;
+import br.com.infnet.ProjetoInfnet.model.domain.entities.Pedido;
+import br.com.infnet.ProjetoInfnet.model.domain.enumerator.StatusPedido;
+import br.com.infnet.ProjetoInfnet.model.domain.enumerator.TipoPagamentoPedido;
 import br.com.infnet.ProjetoInfnet.view.LinhaDeComandoApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -35,46 +41,104 @@ public class AppLoader  implements ApplicationRunner {
     @Autowired
     CancelarPedidoController cancelarPedidoController;
 
+    @Autowired
+    AlterarPedidoController alterarPedidoController;
+
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        LinhaDeComandoApp.Hello();
 
         Scanner scanner = new Scanner(System.in);
+        int escolha;
 
-        //Cadastro e login
-        cadastroController.cadastrar(scanner);
+        System.out.println("\uD83D\uDCC4\u200B Sistema de Cadastro de Pedidos \uD83D\uDCC4\u200B");
 
-        loginController.logar(scanner);
+        //Login e cadastro
+        while (!LoginUsuario.isLogado()) {
 
-        //estoque disponivel
-        estoqueItemController.mostrarEstoque();
+            Thread.sleep(1000);
 
-        //criar 2 pedidos
-        carrinhoDeComprasController.adicionarItem(scanner);
+            LinhaDeComandoApp.mostrarOpcoes("Cadastrar", "Fazer Login", "Itens");
+            System.out.print("Digite a opção ->");
+            escolha = scanner.nextInt();
+            scanner.nextLine();
 
-        carrinhoDeComprasController.adicionarItem(scanner);
+            switch (escolha) {
+                case 1:
+                    CadastroUsuario novoCadastro = LinhaDeComandoApp.requisitarInfoCadastro(scanner);
 
-        cadastroPedidoController.criarPedido();
+                    LinhaDeComandoApp.validarCadastro(cadastroController.cadastrar(novoCadastro));
+                    break;
 
-        //iniciar novo pedido
-        carrinhoDeComprasController.renovarCarrinho();
+                case 2:
+                    String[] infoLogin = LinhaDeComandoApp.requisitarInfoLogin(scanner);
 
-        carrinhoDeComprasController.adicionarItem(scanner);
+                    LinhaDeComandoApp.validarLogin(loginController.logar(infoLogin[0], infoLogin[1]));
+                    break;
 
-        carrinhoDeComprasController.adicionarItem(scanner);
+                case 3:
+                    LinhaDeComandoApp.mostrarEstoque(estoqueItemController.pegarEstoque());
+                    break;
 
-        cadastroPedidoController.criarPedido();
+                default:
+                    System.out.println("Opção Indisponível");
+            }
+        }
 
-        //ver pedidos
+        //sistema
+        while (true) {
+            Thread.sleep(1000);
 
-        consultaDePedidosController.verPedidos();
+            LinhaDeComandoApp.mostrarEstoque(estoqueItemController.pegarEstoque());
+            System.out.println();
+            LinhaDeComandoApp.mostrarCarrinho(carrinhoDeComprasController.mostrarCarrinho());
+            System.out.println();
+            LinhaDeComandoApp.mostrarOpcoes("Adicionar Item no Carrinho", "Finalizar Compra","Ver Pedidos","Alterar endereço","Cancelar Pedido","sair");
+            System.out.print("Digite a opção ->");
+            escolha = scanner.nextInt();
+            scanner.nextLine();
 
-        //cancelar pedido
+            switch (escolha) {
+                case 1:
+                    int[] infoItem = LinhaDeComandoApp.requisitarInfoItem(scanner);
 
-        cancelarPedidoController.cancelarPedido(scanner);
+                    LinhaDeComandoApp.validarItemAdicionadoCarrinho(carrinhoDeComprasController.adicionarItem(infoItem[0], infoItem[1]));
+                    break;
 
-        consultaDePedidosController.verPedidos();
+                case 2:
+                    Pedido pedido = LinhaDeComandoApp.requisitarInfoPedido(scanner);
+
+                    LinhaDeComandoApp.validarPedido(cadastroPedidoController.criarPedido(pedido));
+
+                    LinhaDeComandoApp.esvaziarCarrinho(carrinhoDeComprasController.renovarCarrinho());
+                    break;
+
+                case 3:
+                    LinhaDeComandoApp.mostrarPedidos(consultaDePedidosController.verPedidos());
+                    break;
+
+                case 4:
+                    String[] infoAlterar = LinhaDeComandoApp.requisitarIdAlterarPedido(consultaDePedidosController.verPedidos(),scanner);
+
+                    alterarPedidoController.alterarEndereco(infoAlterar);
+                    break;
+
+                case 5:
+                    //não está funcionando
+                    cancelarPedidoController.cancelarPedido(scanner);
+                    break;
+
+                case 6:
+                    System.out.println("Obrigado por usar o sistema");
+                    System.exit(0);
+
+                default:
+                    escolha = 0;
+                    System.out.println("Opção inválida");
+
+            }
+
+        }
     }
 }

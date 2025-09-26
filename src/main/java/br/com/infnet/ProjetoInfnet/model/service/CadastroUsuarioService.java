@@ -15,17 +15,13 @@ public class CadastroUsuarioService {
     private UsuarioRepository usuarioRepository;
 
     //cadastrar
-    public String cadastrar(String email, String senha){
+    public Usuario cadastrar(CadastroUsuario novoCadastro){
 
-        if(cadastroExistente(email)) return "Usuário já existente";
-
-        CadastroUsuario novoCadastro = new CadastroUsuario(email,senha);
+        if(cadastroExistente(novoCadastro.getEmail())) return null;
 
         Usuario novoUsuario = novoCadastro.criarUsuario();
 
-        Usuario usuarioCdastrado = usuarioRepository.save(novoUsuario);
-
-        return "Usuario " + usuarioCdastrado.getEmail()+ " cadastrado com sucesso";
+        return usuarioRepository.save(novoUsuario);
     }
 
     //email ja existe

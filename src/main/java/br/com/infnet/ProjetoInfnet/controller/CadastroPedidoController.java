@@ -7,6 +7,8 @@ import br.com.infnet.ProjetoInfnet.model.domain.enumerator.StatusPedido;
 import br.com.infnet.ProjetoInfnet.model.domain.enumerator.TipoPagamentoPedido;
 import br.com.infnet.ProjetoInfnet.model.service.CadastroPedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -15,19 +17,10 @@ public class CadastroPedidoController {
     @Autowired
     CadastroPedidoService cadastroPedidoService;
 
-    public void criarPedido(){
+    public ResponseEntity<Pedido> criarPedido(Pedido pedido){
 
-        Pedido pedido = new Pedido(CarrinhoDeCompras.valorTotal(),"rua 0",TipoPagamentoPedido.PIX,CarrinhoDeCompras.getItens());
+        Pedido novoPedido = cadastroPedidoService.criarPedido(pedido);
 
-        cadastroPedidoService.criarPedido(pedido);
+        return new ResponseEntity<Pedido>(novoPedido,HttpStatus.CREATED);
     }
-
-    public void pegarConteudo(){
-        var teste = cadastroPedidoService.teste();
-
-        for(var testes : teste){
-            System.out.println(testes);
-        }
-    }
-
 }

@@ -25,10 +25,8 @@ public class Pedido {
     private StatusPedido status;
     private TipoPagamentoPedido pagamento;
 
-    public Pedido(Double preco, String endereco,TipoPagamentoPedido pagamento,List<PedidoItem> conteudo) {
-        this.preco = preco;
+    public Pedido(String endereco,TipoPagamentoPedido pagamento) {
         this.endereco = endereco;
-        this.conteudo = conteudo;
         this.pagamento = pagamento;
     }
 
